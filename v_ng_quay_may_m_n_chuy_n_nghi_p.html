@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoang Huy Green River - Vòng Quay May Mắn</title>
+  
+  <!-- Tailwind CSS & Font Awesome & Canvas Confetti -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Montserrat:wght@300;400;500;600;700;800&family=Orbitron:wght@700;900&display=swap');
+
+    :root {
+      /* Brand Color System */
+      --teal-primary: #2E5E5B;
+      --teal-deep: #193D49;
+      --teal-darkest: #0e242c;
+      --gold-light: #E6D0C7;
+      --gold-mid: #C0AFA4;
+      --gold-dark: #A48574;
+      --gold-shadow: rgba(164, 133, 116, 0.45);
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: radial-gradient(circle at 50% 25%, #2E5E5B 0%, #193D49 50%, #0d2229 100%);
+      min-height: 100vh;
+      color: #fff;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .font-brand {
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.15em;
+    }
+
+    .font-digital {
+      font-family: 'Orbitron', monospace;
+    }
+
+    /* Metallic Champagne & Rose Bronze Gradient */
+    .champagne-gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, #E6D0C7 35%, #C0AFA4 65%, #A48574 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+    }
+
+    .champagne-border {
+      border: 1.5px solid transparent;
+      background: linear-gradient(#193D49, #193D49) padding-box,
+                  linear-gradient(135deg, #E6D0C7 0%, #C0AFA4 50%, #A48574 100%) border-box;
+    }
+
+    .gold-btn {
+      background: linear-gradient(135deg, #E6D0C7 0%, #C0AFA4 45%, #A48574 100%);
+      color: #193D49;
+      box-shadow: 0 10px 25px -5px rgba(164, 133, 116, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .gold-btn:hover {
+      background: linear-gradient(135deg, #ffffff 0%, #E6D0C7 45%, #C0AFA4 100%);
+      box-shadow: 0 15px 35px 0px rgba(230, 208, 199, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+    }
+    .gold-btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    /* Ambient Glow Behind Stage */
+    .spotlight-halo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(85vw, 850px);
+      height: 480px;
+      background: radial-gradient(ellipse at center, rgba(46, 94, 91, 0.7) 0%, rgba(25, 61, 73, 0.4) 45%, transparent 75%);
+      filter: blur(60px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Slot Machine Reel Enclosure */
+    .slot-stage-box {
+      background: linear-gradient(145deg, rgba(25, 61, 73, 0.85), rgba(14, 36, 44, 0.95));
+      backdrop-filter: blur(20px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7),
+                  0 0 45px rgba(192, 175, 164, 0.2),
+                  inset 0 1px 1px rgba(230, 208, 199, 0.3);
+      border-radius: 28px;
+      border: 2px solid rgba(230, 208, 199, 0.35);
+    }
+
+    /* Individual 3D Digit Drum */
+    .digit-drum {
+      position: relative;
+      height: 140px;
+      width: 95px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #0b1a20 0%, #15343e 25%, #25515d 50%, #15343e 75%, #0b1a20 100%);
+      border-radius: 18px;
+      border: 2px solid rgba(192, 175, 164, 0.4);
+      box-shadow: inset 0 12px 25px rgba(0,0,0,0.85), 
+                  inset 0 -12px 25px rgba(0,0,0,0.85),
+                  0 8px 20px rgba(0,0,0,0.5);
+    }
+
+    @media (min-width: 640px) {
+      .digit-drum {
+        height: 190px;
+        width: 130px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .digit-drum {
+        height: 230px;
+        width: 160px;
+      }
+    }
+
+    /* Inner Center Highlight Lens */
+    .digit-drum::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
+      height: 48%;
+      border-top: 1px solid rgba(230, 208, 199, 0.4);
+      border-bottom: 1px solid rgba(230, 208, 199, 0.4);
+      background: linear-gradient(90deg, rgba(230, 208, 199, 0.03) 0%, rgba(230, 208, 199, 0.12) 50%, rgba(230, 208, 199, 0.03) 100%);
+      pointer-events: none;
+    }
+
+    .digit-reel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.1s cubic-bezier(0.12, 0.8, 0.2, 1);
+      will-change: transform;
+    }
+
+    .digit-item {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4.8rem;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 0 25px rgba(230, 208, 199, 0.6), 0 3px 6px rgba(0,0,0,0.8);
+    }
+
+    @media (min-width: 640px) {
+      .digit-item {
+        height: 190px;
+        font-size: 6.5rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .digit-item {
+        height: 230px;
+        font-size: 8rem;
+      }
+    }
+
+    /* Custom Luxury Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #A48574;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(14, 36, 44, 0.6);
+    }
+  </style>
+</head>
+<body class="relative flex flex-col justify-between min-h-screen selection:bg-[#C0AFA4] selection:text-[#193D49]">
+  <div class="spotlight-halo"></div>
+
+  <!-- TOP HEADER WITH HOANG HUY GREEN RIVER IDENTITY -->
+  <header class="relative z-20 w-full px-4 sm:px-8 py-4 border-b border-[#C0AFA4]/20 backdrop-blur-md bg-[#193D49]/40 flex flex-wrap items-center justify-between gap-4">
+    
+    <!-- Brand Identity Logo & Name (Tích hợp Logo Chuẩn & Upload Logo Riêng) -->
+    <div class="flex items-center gap-3 sm:gap-5 group cursor-pointer" onclick="document.getElementById('logo-upload-input').click()" title="Bấm để tải lên ảnh logo riêng của bạn">
+      <input type="file" id="logo-upload-input" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
+      
+      <!-- Container Logo: Hiển thị ảnh tải lên hoặc Logo Vector tinh xảo -->
+      <div id="brand-logo-container" class="relative flex items-center justify-center filter drop-shadow-[0_2px_12px_rgba(230,208,199,0.5)] transition group-hover:scale-105">
+        
+        <!-- Ảnh logo tải lên (ẩn theo mặc định nếu chưa chọn ảnh) -->
+        <img id="custom-logo-img" src="" alt="Hoang Huy Green River Logo" class="hidden max-h-16 sm:max-h-20 max-w-[220px] object-contain">
+        
+        <!-- Logo SVG chuẩn xác tuyệt đối theo mẫu Hoang Huy Green River -->
+        <div id="default-vector-logo" class="flex items-center gap-3.5">
+          <div class="w-12 h-14 sm:w-16 sm:h-20 flex-shrink-0">
+            <svg viewBox="0 0 200 240" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="hhMetallic" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffffff"/>
+                  <stop offset="25%" stop-color="#E6D0C7"/>
+                  <stop offset="65%" stop-color="#C0AFA4"/>
+                  <stop offset="100%" stop-color="#A48574"/>
+                </linearGradient>
+                <linearGradient id="hhMetallicDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#E6D0C7"/>
+                  <stop offset="60%" stop-color="#A48574"/>
+                  <stop offset="100%" stop-color="#72584b"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Khiên ngoài hoàng gia và cuốn góc baroque -->
+              <path d="M100 230 C76 205 32 170 30 92 C30 70 38 60 55 60 C78 60 88 82 100 82 C112 82 122 60 145 60 C162 60 170 70 170 92 C168 170 124 205 100 230 Z" 
+                    stroke="url(#hhMetallic)" stroke-width="7" stroke-linejoin="round" fill="rgba(25, 61, 73, 0.4)"/>
+              
+              <!-- Cuốn vòm đối xứng trên đỉnh khiên -->
+              <path d="M42 64 C25 64 16 46 26 30 C35 15 58 16 66 35 C70 45 65 60 52 62" 
+                    stroke="url(#hhMetallic)" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <path d="M158 64 C175 64 184 46 174 30 C165 15 142 16 134 35 C130 45 135 60 148 62" 
+                    stroke="url(#hhMetallic)" stroke-width="7" stroke-linecap="round" fill="none"/>
+              <path d="M56 22 C78 22 92 38 100 48 C108 38 122 22 144 22" 
+                    stroke="url(#hhMetallic)" stroke-width="6" stroke-linecap="round" fill="none"/>
+
+              <!-- Cánh lá cây và dòng chảy trung tâm đối xứng -->
+              <path d="M100 68 C80 100 58 135 70 175 C78 200 95 212 100 216 C105 212 122 200 130 175 C142 135 120 100 100 68 Z" 
+                    stroke="url(#hhMetallic)" stroke-width="5" fill="none"/>
+              
+              <!-- Sống lá & vân lá nghệ thuật -->
+              <line x1="100" y1="80" x2="100" y2="205" stroke="url(#hhMetallic)" stroke-width="6" stroke-linecap="round"/>
+              <path d="M100 115 C112 120 122 135 124 150" stroke="url(#hhMetallic)" stroke-width="4.5" stroke-linecap="round"/>
+              <path d="M100 142 C112 147 120 160 121 172" stroke="url(#hhMetallic)" stroke-width="4.5" stroke-linecap="round"/>
+              <path d="M100 115 C88 120 78 135 76 150" stroke="url(#hhMetallic)" stroke-width="4.5" stroke-linecap="round"/>
+              <path d="M100 142 C88 147 80 160 79 172" stroke="url(#hhMetallic)" stroke-width="4.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <div class="flex flex-col">
+            <h1 class="font-brand text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-[0.22em] text-[#E6D0C7] uppercase leading-none drop-shadow">
+              HOANG HUY
+            </h1>
+            <p class="font-brand text-xs sm:text-sm font-semibold tracking-[0.42em] text-[#C0AFA4] uppercase mt-1.5 leading-none">
+              GREEN RIVER
+            </p>
+            <span class="text-[10px] sm:text-xs font-medium uppercase tracking-wider text-[#E6D0C7]/70 block mt-1">
+              Chương Trình Quay Số May Mắn
+            </span>
+          </div>
+        </div>
+
+        <!-- Nút biểu tượng nhỏ hướng dẫn đổi ảnh -->
+        <div class="absolute -bottom-1 -right-2 bg-[#2E5E5B] border border-[#E6D0C7]/60 rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow" title="Đổi ảnh Logo">
+          <i class="fa-solid fa-camera text-[9px] text-[#E6D0C7]"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Tools Bar -->
+    <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullscreen()" class="px-3 py-2 rounded-xl bg-[#193D49]/70 hover:bg-[#2E5E5B] border border-[#C0AFA4]/40 text-xs font-semibold text-[#E6D0C7] transition active:scale-95 flex items-center gap-1.5" title="Chế độ toàn màn hình LED">
+        <i class="fa-solid fa-expand text-[#E6D0C7]"></i>
+        <span class="hidden sm:inline">Màn hình LED</span>
+      </button>
+
+      <!-- Audio Toggle -->
+      <button onclick="toggleSound()" id="sound-btn" class="px-3 py-2 rounded-xl bg-[#193D49]/70 hover:bg-[#2E5E5B] border border-[#C0AFA4]/40 text-xs font-semibold text-[#E6D0C7] transition active:scale-95 flex items-center gap-1.5">
+        <i class="fa-solid fa-volume-high text-[#E6D0C7]" id="sound-icon"></i>
+        <span class="hidden sm:inline" id="sound-text">Âm thanh</span>
+      </button>
+
+      <!-- History Winners Drawer -->
+      <button onclick="openHistoryDrawer()" class="px-3 py-2 rounded-xl bg-[#2E5E5B]/80 hover:bg-[#2E5E5B] border border-[#E6D0C7]/50 text-xs font-bold text-[#E6D0C7] transition active:scale-95 flex items-center gap-2 shadow-md">
+        <i class="fa-solid fa-trophy text-[#E6D0C7]"></i>
+        <span>Đã Trúng</span>
+        <span id="winners-counter" class="bg-[#E6D0C7] text-[#193D49] font-black px-1.5 py-0.5 rounded-full text-[11px]">0</span>
+      </button>
+
+      <!-- Settings / Config -->
+      <button onclick="openSettingsModal()" class="p-2 sm:px-3 sm:py-2 rounded-xl bg-[#193D49]/70 hover:bg-[#2E5E5B] border border-[#C0AFA4]/40 text-[#E6D0C7] transition active:scale-95" title="Cài đặt thông số">
+        <i class="fa-solid fa-gear text-sm"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN STAGE / WHEEL ARENA -->
+  <main class="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-6 max-w-6xl mx-auto w-full">
+    
+    <!-- Current Prize Badge -->
+    <div class="mb-5 sm:mb-7 text-center">
+      <div class="inline-flex items-center gap-2.5 px-6 py-2 rounded-full border border-[#E6D0C7]/50 bg-[#193D49]/80 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+        <i class="fa-solid fa-gem text-[#E6D0C7] animate-pulse"></i>
+        <span id="current-prize-display" class="font-brand text-sm sm:text-lg font-extrabold uppercase tracking-widest text-[#E6D0C7]">
+          GIẢI ĐẶC BIỆT
+        </span>
+      </div>
+      <p id="pool-status-label" class="text-xs text-[#C0AFA4] mt-2 font-medium tracking-wider">
+        Kho số: 999 mã vé (001 - 999) • 100% ngẫu nhiên minh bạch
+      </p>
+    </div>
+
+    <!-- 3-DIGIT DRUM SLOTS CONTAINER -->
+    <div class="slot-stage-box p-4 sm:p-8 flex items-center justify-center gap-3 sm:gap-6 shadow-2xl">
+      
+      <!-- Digit 1: Hàng Trăm -->
+      <div class="flex flex-col items-center">
+        <span class="text-[10px] sm:text-xs uppercase tracking-widest text-[#C0AFA4] font-semibold mb-2">Hàng Trăm</span>
+        <div class="digit-drum" id="drum-0">
+          <div class="digit-reel font-digital" id="reel-0">
+            <!-- Dynamically populated numbers -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Digit 2: Hàng Chục -->
+      <div class="flex flex-col items-center">
+        <span class="text-[10px] sm:text-xs uppercase tracking-widest text-[#C0AFA4] font-semibold mb-2">Hàng Chục</span>
+        <div class="digit-drum" id="drum-1">
+          <div class="digit-reel font-digital" id="reel-1">
+            <!-- Dynamically populated numbers -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Digit 3: Hàng Đơn Vị -->
+      <div class="flex flex-col items-center">
+        <span class="text-[10px] sm:text-xs uppercase tracking-widest text-[#C0AFA4] font-semibold mb-2">Đơn Vị</span>
+        <div class="digit-drum" id="drum-2">
+          <div class="digit-reel font-digital" id="reel-2">
+            <!-- Dynamically populated numbers -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- INTERACTIVE CONTROL PANEL -->
+    <div class="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-4 w-full">
+      
+      <!-- Prize Select Dropdown -->
+      <div class="relative">
+        <select id="prize-select" onchange="onPrizeChange(this.value)" 
+          class="bg-[#193D49] text-[#E6D0C7] font-bold border border-[#C0AFA4]/50 px-4 py-3.5 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#E6D0C7] shadow-lg cursor-pointer">
+          <option value="Giải Đặc Biệt">👑 GIẢI ĐẶC BIỆT</option>
+          <option value="Giải Nhất">🥇 GIẢI NHẤT</option>
+          <option value="Giải Nhì">🥈 GIẢI NHÌ</option>
+          <option value="Giải Ba">🥉 GIẢI BA</option>
+          <option value="Giải Khuyến Khích">🎁 GIẢI KHUYẾN KHÍCH</option>
+          <option value="Giải Tri Ân Khách Hàng">✨ GIẢI TRI ÂN</option>
+        </select>
+      </div>
+
+      <!-- MAIN SPIN BUTTON -->
+      <button id="spin-btn" onclick="toggleSpin()" 
+        class="gold-btn group relative px-10 py-3.5 sm:px-14 sm:py-4 rounded-2xl font-black uppercase tracking-wider text-base sm:text-xl flex items-center gap-3">
+        <i class="fa-solid fa-play text-lg sm:text-xl group-hover:scale-125 transition-transform" id="spin-icon"></i>
+        <span id="spin-label" class="font-bold tracking-widest">BẮT ĐẦU QUAY</span>
+      </button>
+
+      <!-- Reset Single View Button -->
+      <button onclick="resetDrumView()" class="px-5 py-3.5 rounded-2xl bg-[#193D49]/80 hover:bg-[#2E5E5B] border border-[#C0AFA4]/40 text-[#E6D0C7] font-semibold text-xs sm:text-sm transition active:scale-95 flex items-center gap-2">
+        <i class="fa-solid fa-arrow-rotate-right"></i>
+        <span>Làm mới</span>
+      </button>
+    </div>
+
+    <!-- Quick Shortcuts & Hints -->
+    <div class="mt-5 flex flex-wrap items-center justify-center gap-4 text-[11px] sm:text-xs text-[#C0AFA4]/80">
+      <div class="flex items-center gap-1.5">
+        <kbd class="px-2 py-0.5 rounded bg-black/40 border border-[#C0AFA4]/30 text-[#E6D0C7] font-mono font-bold">Spacebar</kbd>
+        <span>Phím tắt quay</span>
+      </div>
+      <span>•</span>
+      <label class="flex items-center gap-2 cursor-pointer hover:text-white">
+        <input type="checkbox" id="no-duplicate-toggle" checked onchange="toggleNoDuplicate(this.checked)" class="w-4 h-4 rounded accent-[#C0AFA4]">
+        <span>Không lặp lại số đã trúng</span>
+      </label>
+      <span>•</span>
+      <div class="flex items-center gap-1.5">
+        <span>Thời gian quay:</span>
+        <select id="spin-speed" class="bg-black/50 border border-[#C0AFA4]/30 rounded-lg px-2 py-0.5 text-[#E6D0C7]">
+          <option value="3.5">3.5 Giây (Nhanh)</option>
+          <option value="5" selected>5.0 Giây (Chuẩn)</option>
+          <option value="7.5">7.5 Giây (Kịch tính)</option>
+        </select>
+      </div>
+    </div>
+  </main>
+
+  <!-- LUXURY FOOTER -->
+  <footer class="relative z-10 px-4 py-3 text-center border-t border-[#C0AFA4]/15 bg-[#193D49]/60 text-[11px] text-[#C0AFA4]/60">
+    <p class="font-medium tracking-wide">
+      HOANG HUY GREEN RIVER • KHÔNG GIAN SỐNG THỊNH VƯỢNG BÊN DÒNG SÔNG XANH
+    </p>
+  </footer>
+
+  <!-- WINNER CELEBRATION MODAL -->
+  <div id="winner-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+    <div id="winner-card" class="relative w-full max-w-lg bg-gradient-to-b from-[#193D49] to-[#0e242c] border-2 border-[#E6D0C7] rounded-3xl p-6 sm:p-10 text-center shadow-[0_0_80px_rgba(230,208,199,0.35)] transform transition-all duration-300 scale-95 opacity-0">
+      
+      <!-- Top Trophy Icon Badge -->
+      <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full border-2 border-[#E6D0C7] bg-[#193D49] flex items-center justify-center shadow-xl">
+        <i class="fa-solid fa-crown text-3xl text-[#E6D0C7] animate-bounce"></i>
+      </div>
+
+      <p class="font-brand text-xs sm:text-sm font-semibold tracking-widest text-[#C0AFA4] uppercase mt-6">
+        CHÚC MỪNG QUÝ KHÁCH HÀNG MAY MẮN
+      </p>
+      
+      <h3 id="modal-prize-name" class="font-brand text-2xl sm:text-3xl font-black champagne-gradient-text mt-2 uppercase">
+        GIẢI ĐẶC BIỆT
+      </h3>
+
+      <!-- Winner Digits Display -->
+      <div class="my-6 flex items-center justify-center">
+        <div id="modal-winner-number" class="font-digital text-5xl sm:text-7xl font-black tracking-widest text-[#193D49] bg-gradient-to-r from-[#E6D0C7] via-[#ffffff] to-[#C0AFA4] px-8 py-3 rounded-2xl shadow-2xl border border-white">
+          000
+        </div>
+      </div>
+
+      <p class="text-xs text-[#C0AFA4]/80">Mã dự thưởng đã được ghi nhận vào danh sách trao giải chính thức.</p>
+
+      <div class="mt-8 flex justify-center">
+        <button onclick="closeWinnerModal()" class="gold-btn px-8 py-3 rounded-xl font-bold text-sm tracking-wider uppercase shadow-lg">
+          TIẾP TỤC QUAY
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIGURATION MODAL -->
+  <div id="settings-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-[#193D49] border border-[#C0AFA4]/30 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl">
+      <div class="px-6 py-4 border-b border-[#C0AFA4]/20 flex items-center justify-between bg-[#0e242c]/50">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-[#E6D0C7]"></i>
+          <h3 class="font-bold text-base text-white">Cấu Hình Dải Số Quay Thưởng</h3>
+        </div>
+        <button onclick="closeSettingsModal()" class="text-[#C0AFA4] hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-[#C0AFA4] mb-1">Ảnh Logo Thương Hiệu:</label>
+          <div class="flex items-center gap-3">
+            <button onclick="document.getElementById('logo-upload-input').click()" class="px-3.5 py-2 rounded-xl bg-[#2E5E5B] hover:bg-[#2E5E5B]/80 text-[#E6D0C7] text-xs font-bold border border-[#C0AFA4]/40 flex items-center gap-1.5">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Tải ảnh logo mới
+            </button>
+            <button onclick="resetToDefaultLogo()" id="reset-logo-btn" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs text-[#C0AFA4] hidden">
+              Dùng logo mặc định
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#C0AFA4] mb-1">Số bắt đầu (Min):</label>
+          <input type="number" id="config-min" value="1" min="0" class="w-full bg-[#0e242c] border border-[#C0AFA4]/40 rounded-xl px-3 py-2 text-white text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-[#C0AFA4] mb-1">Số kết thúc (Max):</label>
+          <input type="number" id="config-max" value="999" min="1" max="999" class="w-full bg-[#0e242c] border border-[#C0AFA4]/40 rounded-xl px-3 py-2 text-white text-sm">
+          <span class="text-[11px] text-[#C0AFA4]/70 mt-1 block">Tối đa 999 để hiển thị trọn vẹn 3 ô số (001 - 999).</span>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-[#C0AFA4]/20 bg-[#0e242c]/50 flex items-center justify-between">
+        <button onclick="resetAllWinnersConfirmation()" class="text-xs text-red-400 hover:text-red-300 font-semibold underline">
+          Xóa toàn bộ lịch sử
+        </button>
+        <div class="flex gap-2">
+          <button onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl bg-white/10 text-xs font-bold text-white">Hủy</button>
+          <button onclick="saveSettingsConfig()" class="gold-btn px-5 py-2 rounded-xl text-xs font-black uppercase">Lưu Cấu Hình</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WINNERS HISTORY DRAWER (OFF-CANVAS) -->
+  <div id="history-drawer" class="fixed inset-y-0 right-0 w-full max-w-md bg-[#193D49]/95 backdrop-blur-2xl border-l border-[#C0AFA4]/30 z-50 transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+    <div class="p-5 border-b border-[#C0AFA4]/20 flex items-center justify-between bg-[#0e242c]/50">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-award text-[#E6D0C7] text-lg"></i>
+        <h3 class="font-brand font-bold text-white text-sm uppercase tracking-wider">Danh Sách Trúng Thưởng</h3>
+      </div>
+      <button onclick="closeHistoryDrawer()" class="text-[#C0AFA4] hover:text-white p-1">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Actions -->
+    <div class="p-3 bg-[#0e242c]/30 border-b border-[#C0AFA4]/20 flex items-center gap-2">
+      <button onclick="exportWinnersToCSV()" class="flex-1 py-2 px-3 rounded-xl bg-[#2E5E5B] hover:bg-[#2E5E5B]/80 border border-[#C0AFA4]/30 text-xs font-bold text-[#E6D0C7] flex items-center justify-center gap-1.5 transition">
+        <i class="fa-solid fa-file-excel"></i> Xuất Excel / CSV
+      </button>
+      <button onclick="window.print()" class="py-2 px-3 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white flex items-center justify-center gap-1.5 transition">
+        <i class="fa-solid fa-print"></i> In
+      </button>
+    </div>
+
+    <!-- Content list -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-2.5" id="winners-items-container">
+      <!-- Populated via JS -->
+    </div>
+  </div>
+
+  <!-- AUDIO & LOGIC SCRIPT ENGINE -->
+  <script>
+    /* =========================================================================
+       1. GLOBAL STATE & INITIALIZATION
+       ========================================================================= */
+    const state = {
+      min: 1,
+      max: 999,
+      noDuplicates: true,
+      currentPrize: 'Giải Đặc Biệt',
+      pool: [],
+      winners: [],
+      isSpinning: false,
+      soundEnabled: true
+    };
+
+    let audioContext = null;
+
+    window.onload = function() {
+      initAudio();
+      loadStoredState();
+      buildPool();
+      initSlotReels();
+      renderWinnersList();
+      updatePoolStatus();
+
+      // Keyboard Shortcut (Space to spin)
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && !state.isSpinning && !document.getElementById('settings-modal').classList.contains('flex')) {
+          e.preventDefault();
+          toggleSpin();
+        }
+      });
+    };
+
+    /* =========================================================================
+       2. WEB AUDIO SYNTHESIZER (No external mp3)
+       ========================================================================= */
+    function initAudio() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        audioContext = new AudioCtx();
+      } catch(e) {
+        console.warn('Audio API unavailable');
+      }
+    }
+
+    function resumeAudio() {
+      if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    }
+
+    function playTick() {
+      if (!state.soundEnabled || !audioContext) return;
+      resumeAudio();
+      try {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(500 + Math.random() * 250, audioContext.currentTime);
+        gain.gain.setValueAtTime(0.06, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start();
+        osc.stop(audioContext.currentTime + 0.05);
+      } catch(e) {}
+    }
+
+    function playDrumStopSound() {
+      if (!state.soundEnabled || !audioContext) return;
+      resumeAudio();
+      try {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, audioContext.currentTime);
+        gain.gain.setValueAtTime(0.12, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.15);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start();
+        osc.stop(audioContext.currentTime + 0.16);
+      } catch(e) {}
+    }
+
+    function playVictoryChimes() {
+      if (!state.soundEnabled || !audioContext) return;
+      resumeAudio();
+      // Royal fanfare chord (C - E - G - B - C)
+      const freqs = [523.25, 659.25, 783.99, 987.77, 1046.50];
+      freqs.forEach((f, idx) => {
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, audioContext.currentTime + idx * 0.08);
+        gain.gain.setValueAtTime(0.15, audioContext.currentTime + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + idx * 0.08 + 0.6);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start(audioContext.currentTime + idx * 0.08);
+        osc.stop(audioContext.currentTime + idx * 0.08 + 0.65);
+      });
+    }
+
+    function toggleSound() {
+      state.soundEnabled = !state.soundEnabled;
+      const icon = document.getElementById('sound-icon');
+      const text = document.getElementById('sound-text');
+      if (state.soundEnabled) {
+        icon.className = 'fa-solid fa-volume-high text-[#E6D0C7]';
+        text.innerText = 'Âm thanh';
+      } else {
+        icon.className = 'fa-solid fa-volume-xmark text-gray-400';
+        text.innerText = 'Tắt';
+      }
+    }
+
+    /* =========================================================================
+       3. NUMBER POOL & DRUM SLOTS
+       ========================================================================= */
+    function buildPool() {
+      const numbers = [];
+      for (let i = state.min; i <= state.max; i++) {
+        numbers.push(i.toString().padStart(3, '0'));
+      }
+
+      if (state.noDuplicates) {
+        const wonSet = new Set(state.winners.map(w => w.number));
+        state.pool = numbers.filter(n => !wonSet.has(n));
+      } else {
+        state.pool = [...numbers];
+      }
+      updatePoolStatus();
+    }
+
+    function updatePoolStatus() {
+      const label = document.getElementById('pool-status-label');
+      label.innerText = `Kho số: ${state.pool.length} mã vé khả dụng (${state.min.toString().padStart(3, '0')} - ${state.max.toString().padStart(3, '0')}) • Sẵn sàng`;
+    }
+
+    function initSlotReels() {
+      for (let reelIdx = 0; reelIdx < 3; reelIdx++) {
+        const reel = document.getElementById(`reel-${reelIdx}`);
+        reel.innerHTML = '';
+
+        // Add 5 cycles of 0-9 to allow long smooth roll
+        for (let cycle = 0; cycle < 5; cycle++) {
+          for (let n = 0; n <= 9; n++) {
+            const digitEl = document.createElement('div');
+            digitEl.className = 'digit-item';
+            digitEl.innerText = n;
+            reel.appendChild(digitEl);
+          }
+        }
+        // Default static display '0'
+        const defaultEl = document.createElement('div');
+        defaultEl.className = 'digit-item';
+        defaultEl.innerText = '0';
+        reel.appendChild(defaultEl);
+      }
+    }
+
+    function getDigitHeight() {
+      if (window.innerWidth >= 1024) return 230;
+      if (window.innerWidth >= 640) return 190;
+      return 140;
+    }
+
+    function resetDrumView() {
+      if (state.isSpinning) return;
+      for (let i = 0; i < 3; i++) {
+        const reel = document.getElementById(`reel-${i}`);
+        reel.style.transition = 'none';
+        reel.style.transform = 'translateY(0px)';
+      }
+    }
+
+    /* =========================================================================
+       4. SPINNING PROCESS (STAGE CONTROL)
+       ========================================================================= */
+    function toggleSpin() {
+      if (state.isSpinning) return;
+
+      if (state.pool.length === 0) {
+        showToast('Đã hết số trong dải quay thưởng!');
+        return;
+      }
+
+      startSpin();
+    }
+
+    function startSpin() {
+      state.isSpinning = true;
+      resumeAudio();
+
+      // UI update
+      const spinBtn = document.getElementById('spin-btn');
+      const spinIcon = document.getElementById('spin-icon');
+      const spinLabel = document.getElementById('spin-label');
+      spinBtn.classList.add('opacity-75', 'pointer-events-none');
+      spinIcon.className = 'fa-solid fa-spinner fa-spin text-xl';
+      spinLabel.innerText = 'ĐANG QUAY...';
+
+      // Select random winning number
+      const randomIndex = Math.floor(Math.random() * state.pool.length);
+      const winningNumber = state.pool[randomIndex]; // e.g. "042"
+
+      const duration = parseFloat(document.getElementById('spin-speed').value) || 5.0;
+      const startTime = performance.now();
+      const totalMs = duration * 1000;
+      const digitH = getDigitHeight();
+
+      // Sound ticker interval
+      const tickInterval = setInterval(() => {
+        playTick();
+      }, 75);
+
+      // Animation stagger for each reel (Hundred -> Ten -> Unit)
+      const stopOffsets = [
+        totalMs * 0.70, // Reel 0 stops at 70% of duration
+        totalMs * 0.85, // Reel 1 stops at 85% of duration
+        totalMs * 1.00  // Reel 2 stops at 100% of duration
+      ];
+
+      const stoppedReels = [false, false, false];
+
+      function animateReels(currentTime) {
+        const elapsed = currentTime - startTime;
+
+        for (let i = 0; i < 3; i++) {
+          const reel = document.getElementById(`reel-${i}`);
+          const targetDigit = parseInt(winningNumber[i]);
+
+          if (elapsed < stopOffsets[i]) {
+            // Rapid randomized visual scrolling
+            const randomOffset = Math.floor(Math.random() * 40) * digitH;
+            reel.style.transform = `translateY(-${randomOffset}px)`;
+          } else if (!stoppedReels[i]) {
+            stoppedReels[i] = true;
+            playDrumStopSound();
+            // Smoothly ease into target digit in cycle 3 (index: 30 + target)
+            const targetY = (30 + targetDigit) * digitH;
+            reel.style.transition = 'transform 0.65s cubic-bezier(0.15, 0.9, 0.25, 1)';
+            reel.style.transform = `translateY(-${targetY}px)`;
+          }
+        }
+
+        if (elapsed < totalMs + 200) {
+          requestAnimationFrame(animateReels);
+        } else {
+          clearInterval(tickInterval);
+          finishSpin(winningNumber);
+        }
+      }
+
+      requestAnimationFrame(animateReels);
+    }
+
+    function finishSpin(winnerNumber) {
+      state.isSpinning = false;
+      const spinBtn = document.getElementById('spin-btn');
+      const spinIcon = document.getElementById('spin-icon');
+      const spinLabel = document.getElementById('spin-label');
+      spinBtn.classList.remove('opacity-75', 'pointer-events-none');
+      spinIcon.className = 'fa-solid fa-play text-xl';
+      spinLabel.innerText = 'BẮT ĐẦU QUAY';
+
+      // Save winner
+      const timeStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      state.winners.unshift({
+        id: 'WIN-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+        prize: state.currentPrize,
+        number: winnerNumber,
+        time: timeStr
+      });
+
+      buildPool();
+      saveState();
+      renderWinnersList();
+
+      // Fanfare and Celebration
+      playVictoryChimes();
+      fireLuxuryConfetti();
+      showWinnerModal(winnerNumber);
+    }
+
+    /* =========================================================================
+       5. CELEBRATION EFFECTS (Confetti & Modal)
+       ========================================================================= */
+    function fireLuxuryConfetti() {
+      if (typeof confetti === 'function') {
+        const colors = ['#E6D0C7', '#C0AFA4', '#A48574', '#ffffff'];
+        confetti({
+          particleCount: 80,
+          spread: 60,
+          origin: { y: 0.65 },
+          colors: colors
+        });
+        setTimeout(() => {
+          confetti({
+            particleCount: 60,
+            angle: 60,
+            spread: 75,
+            origin: { x: 0.1, y: 0.7 },
+            colors: colors
+          });
+          confetti({
+            particleCount: 60,
+            angle: 120,
+            spread: 75,
+            origin: { x: 0.9, y: 0.7 },
+            colors: colors
+          });
+        }, 300);
+      }
+    }
+
+    function showWinnerModal(numberStr) {
+      const modal = document.getElementById('winner-modal');
+      const card = document.getElementById('winner-card');
+      document.getElementById('modal-prize-name').innerText = state.currentPrize;
+      document.getElementById('modal-winner-number').innerText = numberStr;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => {
+        card.classList.remove('scale-95', 'opacity-0');
+        card.classList.add('scale-100', 'opacity-100');
+      }, 20);
+    }
+
+    function closeWinnerModal() {
+      const modal = document.getElementById('winner-modal');
+      const card = document.getElementById('winner-card');
+      card.classList.remove('scale-100', 'opacity-100');
+      card.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }, 200);
+    }
+
+    /* =========================================================================
+       6. WINNERS LIST & EXPORT CSV
+       ========================================================================= */
+    function renderWinnersList() {
+      const container = document.getElementById('winners-items-container');
+      const countBadge = document.getElementById('winners-counter');
+      countBadge.innerText = state.winners.length;
+
+      if (state.winners.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16 text-[#C0AFA4]/50">
+            <i class="fa-solid fa-gift text-4xl mb-3"></i>
+            <p class="text-xs">Chưa có mã vé trúng thưởng nào.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      state.winners.forEach((w, index) => {
+        const item = document.createElement('div');
+        item.className = 'p-3 bg-[#0e242c]/60 border border-[#C0AFA4]/25 rounded-2xl flex items-center justify-between hover:border-[#E6D0C7]/60 transition';
+        item.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="w-7 h-7 rounded-full bg-[#E6D0C7]/20 text-[#E6D0C7] border border-[#E6D0C7]/40 flex items-center justify-center font-bold text-xs">
+              ${state.winners.length - index}
+            </span>
+            <div>
+              <p class="text-[11px] font-bold text-[#C0AFA4] uppercase tracking-wider">${w.prize}</p>
+              <p class="font-digital text-2xl font-black text-[#E6D0C7] tracking-widest leading-none mt-0.5">${w.number}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-[#C0AFA4]/60 block">${w.time}</span>
+            <button onclick="removeWinner('${w.id}')" class="text-[#C0AFA4]/50 hover:text-red-400 text-xs p-1 mt-1" title="Xóa bản ghi này">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function removeWinner(id) {
+      state.winners = state.winners.filter(w => w.id !== id);
+      buildPool();
+      saveState();
+      renderWinnersList();
+    }
+
+    function exportWinnersToCSV() {
+      if (state.winners.length === 0) {
+        showToast('Chưa có dữ liệu trúng thưởng để xuất file!');
+        return;
+      }
+
+      let csv = '\uFEFF'; // UTF-8 BOM
+      csv += 'STT,Giải Thưởng,Mã Vé Trúng,Thời Gian\n';
+      state.winners.slice().reverse().forEach((w, i) => {
+        csv += `"${i + 1}","${w.prize}","${w.number}","${w.time}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Ket_Qua_HoangHuyGreenRiver_${new Date().toISOString().slice(0,10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function openHistoryDrawer() {
+      document.getElementById('history-drawer').classList.remove('translate-x-full');
+    }
+
+    function closeHistoryDrawer() {
+      document.getElementById('history-drawer').classList.add('translate-x-full');
+    }
+
+    /* =========================================================================
+       7. SETTINGS & CONFIGURATION
+       ========================================================================= */
+    function openSettingsModal() {
+      document.getElementById('config-min').value = state.min;
+      document.getElementById('config-max').value = state.max;
+      document.getElementById('settings-modal').classList.remove('hidden');
+      document.getElementById('settings-modal').classList.add('flex');
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settings-modal').classList.remove('flex');
+      document.getElementById('settings-modal').classList.add('hidden');
+    }
+
+    function saveSettingsConfig() {
+      const minVal = parseInt(document.getElementById('config-min').value) || 1;
+      let maxVal = parseInt(document.getElementById('config-max').value) || 999;
+      if (maxVal > 999) maxVal = 999;
+
+      state.min = minVal;
+      state.max = maxVal;
+      buildPool();
+      saveState();
+      closeSettingsModal();
+      showToast('Đã lưu cấu hình dải số thành công!');
+    }
+
+    function resetAllWinnersConfirmation() {
+      if (confirm('Bạn có chắc chắn muốn xóa tất cả lịch sử quay thưởng của sự kiện?')) {
+        state.winners = [];
+        buildPool();
+        saveState();
+        renderWinnersList();
+        closeSettingsModal();
+      }
+    }
+
+    function onPrizeChange(val) {
+      state.currentPrize = val;
+      document.getElementById('current-prize-display').innerText = val;
+    }
+
+    function toggleNoDuplicate(isChecked) {
+      state.noDuplicates = isChecked;
+      buildPool();
+      saveState();
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-[#193D49] text-[#E6D0C7] font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-2xl shadow-2xl border border-[#C0AFA4]/50 flex items-center gap-2';
+      toast.innerHTML = `<i class="fa-solid fa-circle-info text-base"></i><span>${msg}</span>`;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 2600);
+    }
+
+    /* =========================================================================
+       8. PERSISTENCE & LOGO MANAGEMENT
+       ========================================================================= */
+    function handleLogoUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const base64 = event.target.result;
+        applyCustomLogo(base64);
+        try {
+          localStorage.setItem('hh_custom_logo', base64);
+        } catch(err) {
+          console.warn('Không thể lưu ảnh vào LocalStorage do giới hạn dung lượng.');
+        }
+        showToast('Đã tải và cập nhật logo Hoang Huy Green River thành công!');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function applyCustomLogo(imgSrc) {
+      const img = document.getElementById('custom-logo-img');
+      const defaultSvg = document.getElementById('default-vector-logo');
+      const resetBtn = document.getElementById('reset-logo-btn');
+
+      if (imgSrc) {
+        img.src = imgSrc;
+        img.classList.remove('hidden');
+        defaultSvg.classList.add('hidden');
+        if (resetBtn) resetBtn.classList.remove('hidden');
+      } else {
+        img.src = '';
+        img.classList.add('hidden');
+        defaultSvg.classList.remove('hidden');
+        if (resetBtn) resetBtn.classList.add('hidden');
+      }
+    }
+
+    function resetToDefaultLogo() {
+      localStorage.removeItem('hh_custom_logo');
+      applyCustomLogo(null);
+      showToast('Đã khôi phục logo vector chuẩn!');
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('hh_green_river_state', JSON.stringify({
+          min: state.min,
+          max: state.max,
+          noDuplicates: state.noDuplicates,
+          winners: state.winners
+        }));
+      } catch(e) {}
+    }
+
+    function loadStoredState() {
+      try {
+        // Load custom uploaded logo if exists
+        const savedLogo = localStorage.getItem('hh_custom_logo');
+        if (savedLogo) {
+          applyCustomLogo(savedLogo);
+        }
+
+        const raw = localStorage.getItem('hh_green_river_state');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed.min !== undefined) state.min = parsed.min;
+          if (parsed.max !== undefined) state.max = parsed.max;
+          if (parsed.noDuplicates !== undefined) {
+            state.noDuplicates = parsed.noDuplicates;
+            document.getElementById('no-duplicate-toggle').checked = parsed.noDuplicates;
+          }
+          if (parsed.winners) state.winners = parsed.winners;
+        }
+      } catch(e) {}
+    }
+  </script>
+</body>
+</html>
